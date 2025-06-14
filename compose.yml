@@ -1,0 +1,148 @@
+version: '3.9'
+
+services:
+  # ---------------- Symfony Microservice ----------------
+  nginx_advice:
+    image: nginx:latest
+    build:
+      context: ./Advice_service-Flahti/infra
+      args:
+        BUILD_ARGUMENT_ENV: dev
+      dockerfile: ./nginx/Dockerfile
+    ports:
+      - "8010:80"
+    volumes:
+      - ./Advice_service-Flahti/code:/var/www/html:ro,cached
+      - ./Advice_service-Flahti/infra/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - symfony_advice
+    networks:
+      - symfony_net
+
+  symfony_advice:
+    build:
+      context: ./Advice_service-Flahti/infra
+      dockerfile: ./php/Dockerfile
+    volumes:
+      - ./Advice_service-Flahti/code:/var/www/html:cached
+      - ./Advice_service-Flahti/infra/php/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./Advice_service-Flahti/infra/php/config/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+      - mysql_advice
+    networks:
+      - symfony_net
+
+  mysql_advice:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: advice
+    ports:
+      - "3310:3306"
+    volumes:
+      - mysql_data_advice:/var/lib/mysql
+    networks:
+      - symfony_net
+
+  phpmyadmin_advice:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql_advice
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql_advice
+    networks:
+      - symfony_net
+
+  # ---------------- Angular Frontends ----------------
+  public_page:
+    build:
+      context: ./Public_page_service-Flahti
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+
+  dashboard_page:
+    build:
+      context: ./Dashboard_service-Flahti
+      dockerfile: Dockerfile
+    ports:
+      - "4201:4201"
+
+  # ---------------- .NET Microservices ----------------
+  users_backend:
+    build:
+      context: ./Users_Backend-Flahti
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__DefaultConnection=Server=sql_users,1433;Database=UsersDB;User Id=sa;Password=root;TrustServerCertificate=True;Encrypt=False
+    depends_on:
+      - sql_users
+    networks:
+      - dotnet_net
+
+  sql_users:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=root
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data_users:/var/opt/mssql
+    networks:
+      - dotnet_net
+
+  notification_backend:
+    build:
+      context: ./Notification_service-Flahti
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_URLS=http://+:5002
+      - ConnectionStrings__DefaultConnection=Server=sql_notifications,1434;Database=NotifDB;User Id=sa;Password=root;TrustServerCertificate=True;Encrypt=False
+    depends_on:
+      - sql_notifications
+    networks:
+      - dotnet_net
+
+  sql_notifications:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=root
+    ports:
+      - "1434:1434"
+    volumes:
+      - sql_data_notifications:/var/opt/mssql
+    networks:
+      - dotnet_net
+
+  lands_backend:
+    build:
+      context: ./Lands_service-Flahti
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
+    environment:
+      - ASPNETCORE_URLS=http://+:5003
+    networks:
+      - dotnet_net
+
+# ---------------- Volumes ----------------
+volumes:
+  mysql_data_advice:
+  sql_data_users:
+  sql_data_notifications:
+
+# ---------------- Networks ----------------
+networks:
+  symfony_net:
+    driver: bridge
+  dotnet_net:
+    driver: bridge

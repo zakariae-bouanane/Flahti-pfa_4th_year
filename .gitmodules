@@ -1,0 +1,21 @@
+[submodule "Public_page_service-Flahti"]
+	path = Public_page_service-Flahti
+	url = https://github.com/zakariae-bouanane/Public_page_service-Flahti.git
+[submodule "Dashboard_service-Flahti"]
+	path = Dashboard_service-Flahti
+	url = https://github.com/zakariae-bouanane/Dashboard_service-Flahti.git
+[submodule "Users_Backend-Flahti"]
+	path = Users_Backend-Flahti
+	url = https://github.com/zakariae-bouanane/Users_Backend-Flahti.git
+[submodule "Notification_service-Flahti"]
+	path = Notification_service-Flahti
+	url = https://github.com/zakariae-bouanane/Notification_service-Flahti.git
+[submodule "Advice_service-Flahti"]
+	path = Advice_service-Flahti
+	url = https://github.com/zakariae-bouanane/Advice_service-Flahti.git
+[submodule "Lands_service-Flahti"]
+	path = Lands_service-Flahti
+	url = https://github.com/zakariae-bouanane/Lands_service-Flahti.git
+[submodule "Mobile-service_Flahti"]
+	path = Mobile-service_Flahti
+	url = https://github.com/zakariae-bouanane/Mobile-service_Flahti.git
