@@ -19,3 +19,12 @@
 [submodule "Mobile-service_Flahti"]
 	path = Mobile-service_Flahti
 	url = https://github.com/zakariae-bouanane/Mobile-service_Flahti.git
+[submodule "Payment_service-Flahti"]
+	path = Payment_service-Flahti
+	url = https://github.com/zakariae-bouanane/Payment_service-Flahti.git
+[submodule "Sensors_service-Flahti"]
+	path = Sensors_service-Flahti
+	url = https://github.com/zakariae-bouanane/Sensors_service-Flahti.git
+[submodule "E-commerce_service-Flahti"]
+	path = E-commerce_service-Flahti
+	url = https://github.com/zakariae-bouanane/E-commerce_service-Flahti.git
